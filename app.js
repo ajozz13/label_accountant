@@ -26,7 +26,8 @@ app.use( bodyParser.json() );
 // middleware to use for all requests
 app.use(function(req, res, next) {
     // do logging
-    console.log( req.method + ' request to ' + req.originalUrl  );
+    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    console.log( req.method + ' request to ' + req.originalUrl +' from: '+ ip );
     console.log( "params: " + JSON.stringify( req.params ) );
     console.log( "query: " + JSON.stringify( req.query ) );
     console.log( "body: "+ JSON.stringify( req.body ) );
