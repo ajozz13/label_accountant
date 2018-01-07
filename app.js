@@ -10,7 +10,7 @@ var express = require( 'express' ),
 mongoose.Promise = global.Promise;
 mongoose.connect( config.database_url );
 
-//Accept cross-origin browser requests
+/*//Accept cross-origin browser requests
 app.use( function( req, res, next ){
   res.setHeader( "Access-Control-Allow-Methods", "OPTIONS, DELETE, POST, GET" );
   res.header( "Access-Control-Allow-Origin", "https://www.ibcinc.com" );
@@ -18,6 +18,7 @@ app.use( function( req, res, next ){
   res.header( "Access-Control-Allow-Credentials", true );
   next();
 });
+*/
 
 //body-parser
 app.use( bodyParser.urlencoded( { extended: true } ) );
