@@ -38,7 +38,7 @@ exports.options_handler = function( req, res ){
   res.header( "Access-Control-Allow-Origin", "https://www.ibcinc.com" );
   res.header( "Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept" );
   res.header( "Access-Control-Allow-Credentials", true );
-  res.send( 200 );
+  res.sendStatus( 200 );
 }
 
 function handleAnswer( res, req_url, err, entry, http_code, positive_message, negative_message ){
