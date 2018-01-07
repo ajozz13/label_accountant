@@ -10,5 +10,6 @@ module.exports = function( app ){
 
   app.route( config.label_resource+'/:label_id' )
     .get( manager.list_entry )
+    .options( manager.options_handler )
     .delete( manager.remove_entry );
 }
