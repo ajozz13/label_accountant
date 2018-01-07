@@ -36,6 +36,22 @@ describe( label_resource+' service tests', function(){
         });
     });
 
+    it( 'OPTIONS - CORS handler', function( done ){
+      request.options( label_request_url+'/'+label_id, function( error, response, body ){
+        try{
+          expect( body ).toBe( 'OK' );
+          expect( response.statusCode ).toBe( 200 );
+          expect( response.headers ).not.toBe( null );
+          expect( response.headers['access-control-allow-methods'] ).toBe( 'OPTIONS, DELETE, POST, GET' );
+          expect( response.headers['access-control-allow-origin'] ).toMatch( /ibcinc.com/ );
+          done();
+        }catch( exc ){
+          console.log( exc );
+          expect().fail();
+        }
+      });
+    });
+
     it( 'DELETE - removes a label entry', function( done ){
       request.delete( label_request_url+'/'+label_id, { json: true }, function( error, response, body ){
         try{
