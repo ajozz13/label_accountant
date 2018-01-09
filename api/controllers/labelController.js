@@ -1,6 +1,7 @@
 'use strict';
 
 var mongoose = require( 'mongoose' ),
+    logger = require( '../../modules/logger' ),
     Labels = mongoose.model( 'LabelModel' );
 
 //GET 'config.label_resource'
@@ -68,6 +69,8 @@ function sendResponse( res, http_code, response_code, response_message, url, ent
       res.status( http_code ).send( { response_code: response_code, response_message: response_message, request_url: url, entry: entry, error: error, is_error: true } );
     }
   }catch( exception ){
-    console.log( exception );
+    logger.warn( exception );
+  }finally{
+    logger.info( 'Responds '+ http_code + ':'+ response_code + '-' +response_message );
   }
 }
