@@ -4,6 +4,7 @@ var express = require( 'express' ),
     bodyParser = require( 'body-parser' ),
     mongoose = require( 'mongoose' ),
     config = require( './config' ),
+    logger = require( './modules/logger' ),
     Label = require( './api/models/labelModel' );
 
 //dbSetup
@@ -28,11 +29,12 @@ app.use( bodyParser.json() );
 app.use(function(req, res, next) {
     // do logging
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    console.log( req.method + ' request to ' + req.originalUrl +' from: '+ ip );
+    /*console.log( req.method + ' request to ' + req.originalUrl +' from: '+ ip );
     console.log( "params: " + JSON.stringify( req.params ) );
     console.log( "query: " + JSON.stringify( req.query ) );
     console.log( "body: "+ JSON.stringify( req.body ) );
-    console.log( "-------------------------------------" );
+    console.log( "-------------------------------------" );*/
+    logger.info( req.method + ' request to ' + req.originalUrl +' from: '+ ip + ' [' + JSON.stringify( req.body ) + ']');
     next(); // make sure we go to the next routes and don't stop here
 });
 
