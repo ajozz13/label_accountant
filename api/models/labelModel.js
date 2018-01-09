@@ -30,6 +30,10 @@ var LabelSchema = new Schema({
   label_service:{
     type: String,
     required: 'Provide the service requested'
+  },
+  label_station:{
+    type: String,
+    required: 'Provide the station that is requesting the label'
   }
 });
 

@@ -6,7 +6,7 @@ var label_request_url = config.application_url+label_resource;
 describe( label_resource+' service tests', function(){
 
   describe( 'expected calls to '+label_request_url, function(){
-    var label_data = { label_vendor: 'UPS', label_track: '1Z564657rUrksjerIIIES', public_id: '122DEFSX' , ip_address: '192.168.17.12', label_service: '2D' };
+    var label_data = { label_vendor: 'UPS', label_track: '1Z564657rUrksjerIIIES', public_id: '122DEFSX' , ip_address: '192.168.17.12', label_service: '2D', label_station: 'MIA' };
     var label_id;
 
     it( 'POST - creates a new label entry', function( done ){
@@ -29,6 +29,7 @@ describe( label_resource+' service tests', function(){
             expect( body.entry.public_id ).toBe( label_data.public_id );
             expect( body.entry.ip_address ).toBe( label_data.ip_address );
             expect( body.entry.label_service ).toBe( label_data.label_service );
+            expect( body.entry.label_station ).toBe( label_data.label_station );
             label_id = body.entry._id;
             done();
           });
@@ -72,6 +73,7 @@ describe( label_resource+' service tests', function(){
           expect( body.entry.public_id ).toBe( label_data.public_id );
           expect( body.entry.ip_address ).toBe( label_data.ip_address );
           expect( body.entry.label_service ).toBe( label_data.label_service );
+          expect( body.entry.label_station ).toBe( label_data.label_station );
           done();
         });
       }catch( exc ){
@@ -115,6 +117,7 @@ describe( label_resource+' service tests', function(){
           expect( body.entry.public_id ).toBe( label_data.public_id );
           expect( body.entry.ip_address ).toBe( label_data.ip_address );
           expect( body.entry.label_service ).toBe( label_data.label_service );
+          expect( body.entry.label_station ).toBe( label_data.label_station );
           done();
         });
       }catch( exc ){
