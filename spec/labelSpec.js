@@ -33,7 +33,7 @@ describe( label_resource+' service tests', function(){
           });
       }catch( exc ){
         console.log( exc );
-        expect().fail();
+        done.fail();
       }
     });
 
@@ -50,7 +50,7 @@ describe( label_resource+' service tests', function(){
         });
       }catch( exc ){
         console.log( exc );
-        expect().fail();
+        done.fail();
       }
     });
 
@@ -75,7 +75,7 @@ describe( label_resource+' service tests', function(){
         });
       }catch( exc ){
         console.log( exc );
-        expect().fail();
+        done.fail();
       }
     });
 
