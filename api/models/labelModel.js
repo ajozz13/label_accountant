@@ -7,8 +7,8 @@ var LabelSchema = new Schema({
   label_vendor:{
     type: String,
     required: 'A value must be provided for label_vendor',
-    maxlength: [ 3, 'The value {VALUE} exceeds the allowed length {MAXLENGTH}' ],
-    minlength: [ 3, 'The value {VALUE} exceeds the allowed length {MINLENGTH}' ]
+    uppercase: true,
+    minlength: [ 3, 'The value {VALUE} must have a length > {MINLENGTH}' ]
   },
   created_date:{
     type: Date,
