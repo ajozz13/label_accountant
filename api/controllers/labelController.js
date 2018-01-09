@@ -63,6 +63,7 @@ function sendResponse( res, http_code, response_code, response_message, url, ent
   try{
     if( http_code == 200 || http_code == 201 ){
       res.status( http_code ).json( { response_code: response_code, response_message: response_message, request_url: url, entry: entry, is_error: false } );
+      error = '';
     }else{
       if( null === error )
         error = response_message;
