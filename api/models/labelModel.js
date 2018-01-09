@@ -26,6 +26,10 @@ var LabelSchema = new Schema({
   ip_address:{
     type: String,
     required: 'Provide the IP address of the request'
+  },
+  label_service:{
+    type: String,
+    required: 'Provide the service requested'
   }
 });
 
