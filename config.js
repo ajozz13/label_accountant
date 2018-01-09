@@ -7,5 +7,6 @@ module.exports = {
   'application_port' : port,
   'application_url' : host_url,
   'label_resource' : '/v1/labelauditor',
-  'resources': [ 'label_resource' ]
+  'resources': [ 'label_resource' ],
+  'application_name': 'labelauditor'
 }
