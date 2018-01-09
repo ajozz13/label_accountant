@@ -71,6 +71,6 @@ function sendResponse( res, http_code, response_code, response_message, url, ent
   }catch( exception ){
     logger.warn( exception );
   }finally{
-    logger.info( 'Responds '+ http_code + ':'+ response_code + '-' +response_message );
+    logger.info( 'Responds '+ http_code + ':'+ response_code + '-' +response_message + '-' + error );
   }
 }
