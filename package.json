@@ -4,7 +4,7 @@
   "description": "An application to keep track of the Fedex, UPS and other vendor labels created by IBC Label api.  https://api.pactrak.com/ibclabel/documentation.html",
   "main": "app.js",
   "scripts": {
-    "test": "jasmine-node spec --verbose --growl"
+    "test": "jasmine"
   },
   "repository": {
     "type": "git",
@@ -21,7 +21,8 @@
     "mongoose": "^5.0.0-rc2"
   },
   "devDependencies": {
-    "jasmine-node": "^1.14.5",
+    "jasmine": "^2.8.0",
+    "jasmine-spec-reporter": "^4.2.1",
     "request": "^2.83.0"
   }
 }
