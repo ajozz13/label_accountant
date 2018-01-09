@@ -18,7 +18,8 @@
   "homepage": "https://github.com/ajozz13/label_accountant#readme",
   "dependencies": {
     "express": "^4.16.2",
-    "mongoose": "^5.0.0-rc2"
+    "mongoose": "^5.0.0-rc2",
+    "winston": "^2.4.0"
   },
   "devDependencies": {
     "jasmine": "^2.8.0",
