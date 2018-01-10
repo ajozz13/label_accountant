@@ -50,4 +50,5 @@ app.use( function( req, res ){
 });
 
 app.listen( config.application_port );
-console.log( 'Environment: '+ config.environment+' Host: '+ config.application_url + ' started for services: '+ config.resources );
+logger.info( 'Environment: '+ config.environment );
+logger.info( 'Host: '+ config.application_url + ' started for services: '+ config.resources );
