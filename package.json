@@ -5,9 +5,10 @@
   "main": "app.js",
   "scripts": {
     "test": "jasmine",
-    "start": "forever start app.js",
-    "stop": "forever stop app.js",
-    "restart": "forever restart app.js"
+    "start": "NODE_ENV=prod forever start app.js",
+    "stop": "NODE_ENV=prod forever stop app.js",
+    "restart": "NODE_ENV=prod forever restart app.js"
+    "start:dev":"nodemon"
   },
   "repository": {
     "type": "git",
