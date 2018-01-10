@@ -7,9 +7,11 @@ var express = require( 'express' ),
     logger = require( './modules/logger' ),
     Label = require( './api/models/labelModel' );
 
+
 //dbSetup
 mongoose.Promise = global.Promise;
-mongoose.connect( config.database_url );
+mongoose.connect( config.environment === 'development' ?
+  config.database_url_test : config.database_url );
 
 /*//Accept cross-origin browser requests
 app.use( function( req, res, next ){
@@ -48,4 +50,4 @@ app.use( function( req, res ){
 });
 
 app.listen( config.application_port );
-console.log( 'Host: '+ config.application_url + ' started for services: '+ config.resources );
+console.log( 'Environment: '+ config.environment+' Host: '+ config.application_url + ' started for services: '+ config.resources );
