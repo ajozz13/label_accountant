@@ -2,7 +2,13 @@
 
 module.exports = function( app ){
   var manager = require( '../controllers/labelController' ),
-      config = require( '../../config' );
+    path = require('path'),
+    config = require( '../../config' );
+
+  app.route( '/v1/accountant' )
+    .get( function( req, res ){
+      res.sendFile( path.join( __dirname + '../../../static/accountant.html' ) )
+    });
 
   app.route( config.label_resource )
     .get( manager.list_all_labels )
