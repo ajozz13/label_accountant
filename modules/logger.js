@@ -2,7 +2,7 @@
 var Winston = require( 'winston' );
 var fs = require( 'fs' );
 var config = require( '../config' );
-var env = process.env.NODE_ENV || 'development';
+var env = config.environment;
 var logDir = 'logs';
 var tsFormat = () => logtimestamp();//(new Date()).toLocaleTimeString();
 
