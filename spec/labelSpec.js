@@ -130,6 +130,34 @@ describe( label_resource+' service tests', function(){
 
   describe( 'possible unexpected calls to '+label_request_url, function(){
     var label_id = "5a54fdb7418ef26ea876b973";
+    var label_data = { label_vendor: 'UPS', label_track: '1Z564657rUrksjerIIIES', public_id: '122DEFSX' };
+
+    it( 'POST - fails when data is incomplete', function( done ){
+      try{
+        request.post( label_request_url,
+          { json: label_data, headers: { 'Content-Type' : 'application/json' } },
+          //  { form: user_data },
+          function( error, response, body ){
+            if( error ) throw error;
+            expect( body ).not.toBe( null );
+            expect( response.statusCode ).toBe( 400 );
+            expect( body.response_code ).toBe( 2 );
+            expect( body.response_message ).toMatch( /Request could not be completed/ );
+            expect( body.request_url ).toBe( label_resource );
+            expect( body.is_error ).toBe( true );
+            expect( body.error ).not.toBe( null );
+            expect( body.error.errors ).not.toBe( null );
+            expect( body.error.message ).toMatch( /validation failed/ );
+            expect( body.error.name ).toBe( "ValidationError" );
+            done();
+          });
+      }catch( exc ){
+        console.log( exc );
+        done.fail();
+      }
+    });
+
+
     it( 'GET empty list response', function( done ){
       try{
         request.get( label_request_url, { json: true }, function( error, response, body ){
