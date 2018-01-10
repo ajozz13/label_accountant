@@ -7,8 +7,7 @@
     "test": "jasmine",
     "start": "NODE_ENV=prod forever start app.js",
     "stop": "NODE_ENV=prod forever stop app.js",
-    "restart": "NODE_ENV=prod forever restart app.js",
-    "start:dev":"nodemon"
+    "restart": "NODE_ENV=prod forever restart app.js"
   },
   "repository": {
     "type": "git",
