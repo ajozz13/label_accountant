@@ -13,15 +13,15 @@ mongoose.Promise = global.Promise;
 mongoose.connect( config.environment === 'development' ?
   config.database_url_test : config.database_url );
 
-/*//Accept cross-origin browser requests
+//Accept cross-origin browser requests
 app.use( function( req, res, next ){
   res.setHeader( "Access-Control-Allow-Methods", "OPTIONS, DELETE, POST, GET" );
-  res.header( "Access-Control-Allow-Origin", "https://www.ibcinc.com" );
+  res.header( "Access-Control-Allow-Origin", "http://localhost:"+config.application_port );
   res.header( "Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept" );
   res.header( "Access-Control-Allow-Credentials", true );
   next();
 });
-*/
+
 
 //body-parser
 app.use( bodyParser.urlencoded( { extended: true } ) );
