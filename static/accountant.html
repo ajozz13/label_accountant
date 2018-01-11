@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>IBC Label API - Accountant</title>
+<link rel="shortcut icon" href="https://www.ibcinc.com/hubfs/IBC_Logo.jpg?t=1514906276576">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css"
   integrity="sha256-/Z28yXtfBv/6/alw+yZuODgTbKZm86IKbPE/5kjO/xY=" crossorigin="anonymous" />
 </head>
@@ -87,7 +88,7 @@
 <script>
 
 function getURL( service ){
-  return "http://localhost:3000" + service ;
+  return "http://192.168.17.186:3000" + service;
 }
 
 function searchAndSetup( hdr, input, target ){
@@ -102,7 +103,7 @@ function searchAndSetup( hdr, input, target ){
           code = data.response_code;
           msg = data.response_message;
           $( '#id' ).prev( 'input' ).val( '' );
-          target.html( setupCard( hdr, input, data.entry, 1, getURL( '/v1/labelauditor/'+ input ) ) );
+          target.html( setupCard( hdr, input, prepEntry( data.entry ), 1, getURL( '/v1/labelauditor/'+ input ) ) );
         }).fail( function( xhr, txtStatus, err ){
           //console.log( err );
           //console.log( xhr );
@@ -120,10 +121,92 @@ function searchAndSetup( hdr, input, target ){
           console.log( 'Result: '+ status +':(' + code +')-' + msg );
         });
       break;
+/*    case 'ownerid':
+
+      break;*/
     default:
       //should never be visible....
       target.html( messageBlock( hdr + ' is not defined yet.', 'error' ) );
   }
+}
+
+function prepEntry( entry ){
+  if( entry instanceof Object ){
+    var ans = {};
+    var insert_value;
+    var insert_key;
+    try{
+      for (var key in entry) {
+        var insert = true;
+        switch( key ){
+          case 'created_date':
+            var dt = new Date( entry[key] );
+            insert_value = dt.toLocaleDateString() + ' ' + dt.toLocaleTimeString();
+            insert_key = 'created';
+            break;
+          case '__v':
+            insert = false;
+            break;
+          case '_id':
+            insert_key = "id";
+            insert_value = entry[ key ];
+            break;
+          default:
+            insert_key = key;
+            insert_value = entry[ key ];
+        }
+        if( insert ){
+          ans[ insert_key ] = insert_value;
+        }
+      }
+      return ans;
+    }catch( exc ){
+      console.log( exc );
+      return entry;
+    }
+  }else{
+    return entry;
+  }
+}
+
+function produceLinks( input, vendor ){
+  var arr = JSON.parse( input );
+  try{
+    if( Array.isArray( arr ) ){
+      var hldr = $( '<span/>' );
+      var url;
+      var traverse = true;
+      switch( vendor ){
+        case 'FEDEX':
+          url = "https://www.fedex.com/apps/fedextrack/?tracknumbers=";
+          break;
+        case 'UPS':
+          url = "https://wwwapps.ups.com/tracking/tracking.cgi?tracknum=";
+          break;
+        default:
+          traverse = false;
+          hldr.html( input );
+      }
+      if( traverse ){
+        $.each(arr, function( i, val ){
+          var s = $( '<span/>' ).html( createLink( url+val, val ) );
+          hldr.append( s ).append( "&nbsp;" );
+        });
+      }
+      return hldr;
+    }else{
+      return input;
+    }
+  }catch( exc ){
+    console.log( exc );
+    return input;
+  }
+}
+
+function createLink( url, label ){
+  console.log( 'create link for ' + label );
+  label = label || 'Link';
+  return $( "<a/>" ).attr( { href: url, target: "_blank" } ).html( label );
 }
 
 function toHTML( obj ){
