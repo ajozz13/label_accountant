@@ -5,10 +5,13 @@ module.exports = function( app ){
     path = require('path'),
     config = require( '../../config' );
 
-  app.route( '/v1/accountant' )
+  app.route( config.accountant_resource )
     .get( function( req, res ){
       res.sendFile( path.join( __dirname + '../../../static/accountant.html' ) )
     });
+
+  app.route( config.accountant_resource +'/queries' )
+    .get( manager.accountant_queries );
 
   app.route( config.label_resource )
     .get( manager.list_all_labels )
