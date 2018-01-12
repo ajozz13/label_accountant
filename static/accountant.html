@@ -22,13 +22,23 @@
     <div class="column">
 
       <div class='ui segment'>
-
+        <div class="ui top attached label">Single Entry Search</div>
         <h4 class="ui header">Search Using the Entry ID</h4>
         <div class="ui action input">
           <input placeholder="ie: 5a55c4bf45df494c9a3c7488" type="text">
           <button class="ui blue icon button search" id="id"><i class="search icon"></i></button>
         </div>
 
+        <h4 class="ui header">Search Using the Track Number</h4>
+        <div class="ui action input">
+          <input placeholder="ie: 1Z22W0610392017380" type="text">
+          <button class="ui blue icon button search" id="id"><i class="search icon"></i></button>
+        </div>
+        <div class="ui clearing divider"></div>
+        <button class='ui red button reset_search'>Reset</button>
+    </div>
+    <div class='ui segment'>
+       <div class="ui top attached label">Summaries Search</div>
         <h4 class="ui header">Search Using the Owner's Public ID</h4>
         <div class="ui action input">
           <input placeholder="ie: 5685257b" type="text">
@@ -53,7 +63,7 @@
           <button class="ui blue icon button search" id="station"><i class="search icon"></i></button>
         </div>
         <div class="ui clearing divider"></div>
-        <button class='ui red button' id='reset_search'>Reset</button>
+        <button class='ui red button reset_search'>Reset</button>
       </div>
 
 
@@ -104,12 +114,6 @@ function searchAndSetup( hdr, input, target ){
           msg = data.response_message;
           $( '#id' ).prev( 'input' ).val( '' );
           target.html( setupCard( hdr, input, prepEntry( data.entry ), 1, getURL( '/v1/labelauditor/'+ input ) ) );
-      /*    function(){
-            console.log( 'im on it....');
-            target.find( "div[for='label_trak']" ).each( function(){
-              console.log( "track: "+ $(this).html() );
-            }
-            */
         }).fail( function( xhr, txtStatus, err ){
           //console.log( err );
           //console.log( xhr );
@@ -313,7 +317,7 @@ function messageBlock( msg, type, reason ){
 }
 
 $(function (){
-  $( "#reset_search" ).click( function(){
+  $( ".reset_search" ).click( function(){
     var target = $( "#answer_div" );
     $(this).closest('.segment').find( 'input' ).each( function(){
       $(this).val( '' );
