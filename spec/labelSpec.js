@@ -90,7 +90,7 @@ describe( label_resource+' service tests', function(){
           expect( response.statusCode ).toBe( 200 );
           expect( response.headers ).not.toBe( null );
           expect( response.headers['access-control-allow-methods'] ).toBe( 'OPTIONS, DELETE, POST, GET' );
-          expect( response.headers['access-control-allow-origin'] ).toMatch( /ibcinc.com/ );
+          expect( response.headers['access-control-allow-origin'] ).toBe( "*" );
           done();
         });
       }catch( exc ){
