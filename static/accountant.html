@@ -186,7 +186,7 @@ function presentEntry( obj, vendor ){
       var spdiv = $( '<div/>' );
       switch( key ){
         case "label_track":
-          spdiv.attr( "for", key ).html( produceLinks( val, vendor ) );
+          spdiv.attr( "for", key ).html( produceLinks( "[\""+val+"\"]", vendor ) );
           break;
         case "public_id":
           spdiv.attr( "for", key ).html( produceLinks( "[\""+val+"\"]", "IBC" ) );
