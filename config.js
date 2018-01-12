@@ -10,6 +10,7 @@ module.exports = {
   'application_port' : port,
   'application_url' : host_url,
   'label_resource' : '/v1/labelauditor',
+  'accountant_resource' : '/v1/accountant',
   'resources': [ 'label_resource' ],
   'application_name': 'labelauditor',
   'environment' : env
