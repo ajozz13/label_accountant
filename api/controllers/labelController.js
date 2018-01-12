@@ -36,10 +36,43 @@ exports.remove_entry = function( req, res ){
 //options
 exports.options_handler = function( req, res ){
   res.setHeader( "Access-Control-Allow-Methods", "OPTIONS, DELETE, POST, GET" );
-  res.header( "Access-Control-Allow-Origin", "https://www.ibcinc.com" );
+  res.header( "Access-Control-Allow-Origin", "*" );
   res.header( "Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept" );
   res.header( "Access-Control-Allow-Credentials", true );
   res.sendStatus( 200 );
+}
+
+//Accounant queries
+exports.accountant_queries = function( req, res ){
+  var obj = req.query;
+  var key = Object.keys(obj)[0];
+  var send = true;
+  if( key ){
+    switch ( key ) {
+      case 'ownerid':
+
+        break;
+      case 'ip':
+
+        break;
+      case 'vendor':
+
+        break;
+      case 'station':
+
+        break;
+      default:
+        send = false;
+        sendResponse( res, 400, 2, "Query option is not available", req.originalUrl );
+    }
+    if( send ){
+      console.log( obj );
+      var val = obj[key];
+      sendResponse( res, 200, 0, "OK", req.originalUrl, obj );
+    }
+  }else{
+    sendResponse( res, 400, 2, "Request is not available", req.originalUrl );
+  }
 }
 
 function handleAnswer( res, req_url, err, entry, http_code, positive_message, negative_message ){
