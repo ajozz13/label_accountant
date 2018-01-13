@@ -45,39 +45,52 @@ exports.options_handler = function( req, res ){
 //Accounant queries
 exports.accountant_queries = function( req, res ){
   var obj = req.query;
+  var req_counts = obj.hasOwnProperty( '_counts' );
+  if( req_counts ){
+    delete obj._counts;
+  }
   var key = Object.keys(obj)[0];
   var val = obj[key];
-  var send = true;
+
   if( key ){
     switch ( key ) {
-      case 'ownerid':
-
-        break;
-      case 'track':
-        send = false;
+      case 'label_track':
+        //send = false;
         Labels.findOne( { label_track: "["+ val +"]" }, function( err, label ){
           handleAnswer( res, req.originalUrl, err, label, 200, 'OK', 'Track '+ val +' does not exist' );
         });
         break;
-      case 'ip':
-
-        break;
-      case 'vendor':
-
-        break;
-      case 'station':
-
-        break;
       default:
-        send = false;
-        sendResponse( res, 400, 2, "Query option is not available", req.originalUrl );
+        searchBy( req.query, req_counts, key, req, res );
     }
-    if( send ){
-      console.log( obj );
-      sendResponse( res, 200, 0, "OK", req.originalUrl, obj );
-    }
+
+    console.log( obj );
   }else{
     sendResponse( res, 400, 2, "Request is not available", req.originalUrl );
+  }
+}
+
+function getURL( req ){
+  return req.protocol+"://"+req.get('host')+req.path;
+}
+
+function searchBy( obj, counts, by, req, res ){
+  var key = Object.keys(obj)[0];
+  var val = obj[key];
+  if( counts ){
+    var ans = {};
+    Labels.count( obj,function( err, count ){
+      ans[ 'label_count' ] = count;
+      var msg = 'There are '+ count + ' entries with ' + key.toUpperCase()+ ': '+ val;
+      ans[ 'description' ] = msg;
+      ans[ 'json_url' ] = getURL(req) + '?'+by+'='+val;
+      var nmsg = 'No entries found with ' + key.toUpperCase()+ ': '+ val;
+      handleAnswer( res, req.originalUrl, err, ans, 200, 'OK', nmsg );
+    });
+  }else{
+    Labels.find( obj, function( err, labels ){
+      handleAnswer( res, req.originalUrl, err, labels, 200, 'OK', 'The list is empty' );
+    });
   }
 }
 
