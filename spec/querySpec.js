@@ -14,9 +14,9 @@ describe( acct_resource+' service tests', function(){
 
     setupTests( label_data, label_id );
 
-    var lbl = label_data.label_track.match( /\w+[^\[\]]/ );
-    var qry = 'track='+lbl;
-    it( 'GET '+acct_qry_resource + qry, function( done ){
+    it( 'GET - query using track number', function( done ){
+      var itm = label_data.label_track.match( /\w+[^\[\]]/ );
+      var qry = 'label_track='+itm;
       try{
         request.get( acct_request_url + qry, { json: true }, function( error, response, body ){
           expect( body ).not.toBe( null );
@@ -40,6 +40,53 @@ describe( acct_resource+' service tests', function(){
       }
     });
 
+    describe( 'expected calls by IP address', function(){
+      var itm = label_data.ip_address;
+      var qry = 'ip_address='+itm;
+      var cflg = '&_counts';
+      var json_url;
+      it( 'GET - retrieve counts', function( done ){
+        try{
+          request.get( acct_request_url+qry+cflg, { json: true }, function( error, response, body ){
+            expect( body ).not.toBe( null );
+            expect( response.statusCode ).toBe( 200 );
+            expect( body.response_code ).toBe( 0 );
+            expect( body.response_message ).toBe( "OK" );
+            expect( body.request_url ).toBe( acct_qry_resource+qry+cflg );
+            expect( body.entry ).not.toBe( null );
+            expect( body.entry.label_count ).toBe( 1 );
+            expect( body.entry.description ).toMatch( /1 entries with IP_ADDRESS/ );
+            expect( body.entry.json_url ).toBe( acct_request_url + qry );
+            json_url = body.entry.json_url;
+            done();
+          });
+        }catch( exc ){
+          console.log( exc );
+          done.fail();
+        }
+      });
+
+      it( 'GET - retrieve list', function( done ){
+        try{
+          request.get( json_url, { json: true }, function( error, response, body ){
+            expect( body ).not.toBe( null );
+            expect( response.statusCode ).toBe( 200 );
+            expect( body.response_code ).toBe( 0 );
+            expect( body.response_message ).toBe( "OK" );
+            expect( body.request_url ).toBe( acct_qry_resource+qry );
+            expect( body.entry ).not.toBe( null );
+            expect( body.entry.length ).toBe( 1 );
+            done();
+          });
+        }catch( exc ){
+          console.log( exc );
+          done.fail();
+        }
+      });
+
+
+    });
+
   });
 });
 
@@ -52,7 +99,7 @@ function setupTests( label_data, label_id ){
         function( error, response, body ){
           if( error ) throw error;
           label_id = body.entry._id;
-          expect( response.statusCode ).toBe( 201 );
+          console.log( "Test entry added " + response.statusCode );
           done();
       });
     }catch( exc ){
@@ -65,6 +112,7 @@ function setupTests( label_data, label_id ){
     try{
       request.delete( label_request_url+'/'+label_id, { json: true }, function( error, response, body ){
         if( error ) throw error;
+        console.log( "Test entry removed " + response.statusCode );
         done();
       });
     }catch( exc ){
