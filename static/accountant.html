@@ -32,7 +32,7 @@
         <h4 class="ui header">Search Using the Track Number</h4>
         <div class="ui action input">
           <input placeholder="ie: 1Z22W0610392017380" type="text">
-          <button class="ui blue icon button search" id="track"><i class="search icon"></i></button>
+          <button class="ui blue icon button search" id="label_track"><i class="search icon"></i></button>
         </div>
         <div class="ui clearing divider"></div>
         <button class='ui red button reset_search'>Reset</button>
@@ -42,25 +42,25 @@
         <h4 class="ui header">Search Using the Owner's Public ID</h4>
         <div class="ui action input">
           <input placeholder="ie: 5685257b" type="text">
-          <button class="ui blue icon button search" id="ownerid"><i class="search icon"></i></button>
+          <button class="ui blue icon button search" id="public_id"><i class="search icon"></i></button>
         </div>
 
         <h4 class="ui header">Search Using the Source IP Address</h4>
         <div class="ui action input">
           <input placeholder="ie: 192.168.99.1" type="text">
-          <button class="ui blue icon button search" id="ip"><i class="search icon"></i></button>
+          <button class="ui blue icon button search" id="ip_address"><i class="search icon"></i></button>
         </div>
 
         <h4 class="ui header">Search Using the Vendor</h4>
         <div class="ui action input">
           <input placeholder="ie: FEDEX|UPS" type="text">
-          <button class="ui blue icon button search" id="vendor"><i class="search icon"></i></button>
+          <button class="ui blue icon button search" id="label_vendor"><i class="search icon"></i></button>
         </div>
 
         <h4 class="ui header">Search Using the Station</h4>
         <div class="ui action input">
           <input placeholder="ie: MIA|LAX|NYC|ORD" type="text">
-          <button class="ui blue icon button search" id="station"><i class="search icon"></i></button>
+          <button class="ui blue icon button search" id="label_station"><i class="search icon"></i></button>
         </div>
         <div class="ui clearing divider"></div>
         <button class='ui red button reset_search'>Reset</button>
@@ -98,7 +98,8 @@
 <script>
 
 function getURL( service ){
-  return "http://192.168.17.186:3000" + service;
+  //return "http://192.168.17.186:3000" + service;
+  return "http://localhost:3000" + service;
 }
 
 function searchAndSetup( hdr, input, target, btn ){
@@ -113,7 +114,7 @@ function searchAndSetup( hdr, input, target, btn ){
           status = 200;
           code = data.response_code;
           msg = data.response_message;
-          $( '#id' ).prev( 'input' ).val( '' );
+          $( '#'+hdr ).prev( 'input' ).val( '' );
           target.html( setupCard( hdr, input, prepEntry( data.entry ), 1, lnk ) );
         }).fail( function( xhr, txtStatus, err ){
           var resp = xhr.responseJSON;
@@ -130,13 +131,13 @@ function searchAndSetup( hdr, input, target, btn ){
           btn.removeClass( 'loading' );
         });
       break;
-    case 'track':
-      var lnk = getURL( '/v1/accountant/queries?track=' + input );
+    case 'label_track':
+      var lnk = getURL( '/v1/accountant/queries?'+hdr+'=' + input );
       $.getJSON( lnk, function( data ){
           status = 200;
           code = data.response_code;
           msg = data.response_message;
-          $( '#id' ).prev( 'input' ).val( '' );
+          $( '#'+hdr ).prev( 'input' ).val( '' );
           target.html( setupCard( hdr, input, prepEntry( data.entry ), 1, lnk ) );
         }).fail( function( xhr, txtStatus, err ){
           var resp = xhr.responseJSON;
@@ -153,13 +154,35 @@ function searchAndSetup( hdr, input, target, btn ){
           btn.removeClass( 'loading' );
         });
       break;
-/*    case 'ownerid':
-
-      break;*/
+    default:
+      var lnk = getURL( '/v1/accountant/queries?_counts&'+hdr+'=' + input );
+      $.getJSON( lnk, function( data ){
+          status = 200;
+          code = data.response_code;
+          msg = data.response_message;
+          $( '#'+hdr ).prev( 'input' ).val( '' );
+          target.html( setupCard( hdr, input, prepEntry( data.entry ), 1, lnk ) );
+        }).fail( function( xhr, txtStatus, err ){
+          var resp = xhr.responseJSON;
+          status = xhr.status;
+          code = resp.response_code;
+          msg = resp.response_message;
+          var errors = [resp.error, resp.error];
+          var issues = { error: resp.error, errors: errors };
+          reason = toHTML( issues );
+          target.html( setupCard( hdr, input, msg, 1, '', true, reason ) );
+        }).always( function(){
+          console.log( 'Search by: '+ hdr +' - '+ input );
+          console.log( 'Result: '+ status +':(' + code +')-' + msg );
+          btn.removeClass( 'loading' );
+        });
+      break;
+      /*
     default:
       //should never be visible....
       target.html( messageBlock( hdr + ' is not defined yet.', 'error' ) );
       btn.removeClass( 'loading' );
+      */
   }
 }
 
