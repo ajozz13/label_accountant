@@ -32,7 +32,7 @@
         <h4 class="ui header">Search Using the Track Number</h4>
         <div class="ui action input">
           <input placeholder="ie: 1Z22W0610392017380" type="text">
-          <button class="ui blue icon button search" id="id"><i class="search icon"></i></button>
+          <button class="ui blue icon button search" id="track"><i class="search icon"></i></button>
         </div>
         <div class="ui clearing divider"></div>
         <button class='ui red button reset_search'>Reset</button>
@@ -101,24 +101,22 @@ function getURL( service ){
   return "http://192.168.17.186:3000" + service;
 }
 
-function searchAndSetup( hdr, input, target ){
+function searchAndSetup( hdr, input, target, btn ){
   var msg;
   var code;
   var reason;
   var status;
   switch( hdr ){
     case 'id':
-      $.getJSON( getURL( '/v1/labelauditor/'+ input ), function( data ){
+      var lnk = getURL( '/v1/labelauditor/'+ input );
+      $.getJSON( lnk, function( data ){
           status = 200;
           code = data.response_code;
           msg = data.response_message;
           $( '#id' ).prev( 'input' ).val( '' );
-          target.html( setupCard( hdr, input, prepEntry( data.entry ), 1, getURL( '/v1/labelauditor/'+ input ) ) );
+          target.html( setupCard( hdr, input, prepEntry( data.entry ), 1, lnk ) );
         }).fail( function( xhr, txtStatus, err ){
-          //console.log( err );
-          //console.log( xhr );
           var resp = xhr.responseJSON;
-          //console.log( resp );
           status = xhr.status;
           code = resp.response_code;
           msg = resp.response_message;
@@ -129,7 +127,30 @@ function searchAndSetup( hdr, input, target ){
         }).always( function(){
           console.log( 'Search by: '+ hdr +' - '+ input );
           console.log( 'Result: '+ status +':(' + code +')-' + msg );
-          target.removeClass('loading');
+          btn.removeClass( 'loading' );
+        });
+      break;
+    case 'track':
+      var lnk = getURL( '/v1/accountant/queries?track=' + input );
+      $.getJSON( lnk, function( data ){
+          status = 200;
+          code = data.response_code;
+          msg = data.response_message;
+          $( '#id' ).prev( 'input' ).val( '' );
+          target.html( setupCard( hdr, input, prepEntry( data.entry ), 1, lnk ) );
+        }).fail( function( xhr, txtStatus, err ){
+          var resp = xhr.responseJSON;
+          status = xhr.status;
+          code = resp.response_code;
+          msg = resp.response_message;
+          var errors = [resp.error, resp.error];
+          var issues = { error: resp.error, errors: errors };
+          reason = toHTML( issues );
+          target.html( setupCard( hdr, input, msg, 1, '', true, reason ) );
+        }).always( function(){
+          console.log( 'Search by: '+ hdr +' - '+ input );
+          console.log( 'Result: '+ status +':(' + code +')-' + msg );
+          btn.removeClass( 'loading' );
         });
       break;
 /*    case 'ownerid':
@@ -138,6 +159,7 @@ function searchAndSetup( hdr, input, target ){
     default:
       //should never be visible....
       target.html( messageBlock( hdr + ' is not defined yet.', 'error' ) );
+      btn.removeClass( 'loading' );
   }
 }
 
@@ -250,7 +272,6 @@ function produceLinks( input, vendor ){
 }
 
 function createLink( url, label ){
-  console.log( 'create link for ' + label );
   label = label || 'Link';
   return $( "<a/>" ).attr( { href: url, target: "_blank" } ).html( label );
 }
@@ -332,13 +353,14 @@ $(function (){
     if( target.hasClass( 'hidden' ) ){
       target.transition( 'fade' );
     }
+    $(this).addClass( 'loading' );
     var id = $(this).attr('id' );
     var input = $(this).prev('input').val();
     if( input ){
-      target.addClass( 'loading' );
-      searchAndSetup( id, input, target );
+      searchAndSetup( id, input, target, $(this) );
     }else{
       target.html( messageBlock( 'Please enter a value for <b>'+ id + '</b>', 'error' ) );
+      $(this).removeClass( 'loading' );
     }
   });
 });
