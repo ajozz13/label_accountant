@@ -46,11 +46,18 @@ exports.options_handler = function( req, res ){
 exports.accountant_queries = function( req, res ){
   var obj = req.query;
   var key = Object.keys(obj)[0];
+  var val = obj[key];
   var send = true;
   if( key ){
     switch ( key ) {
       case 'ownerid':
 
+        break;
+      case 'track':
+        send = false;
+        Labels.findOne( { label_track: "["+ val +"]" }, function( err, label ){
+          handleAnswer( res, req.originalUrl, err, label, 200, 'OK', 'Track '+ val +' does not exist' );
+        });
         break;
       case 'ip':
 
@@ -67,7 +74,6 @@ exports.accountant_queries = function( req, res ){
     }
     if( send ){
       console.log( obj );
-      var val = obj[key];
       sendResponse( res, 200, 0, "OK", req.originalUrl, obj );
     }
   }else{
