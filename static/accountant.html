@@ -15,7 +15,7 @@
 
 <div class="ui segment">
   <h3 class='ui header'>Search Queries</h3>
-  <p>View all Entries - <a href='http://192.168.17.186:3000/v1/labelauditor' target="_blank">View</a> - Display all the entries in raw JSON Format</p>
+  <p>View all Entries - <a target="_blank" id='all_qry_link'>View</a> - Display all the entries in raw JSON Format</p>
 
 
   <div class="ui two column stackable grid container">
@@ -98,8 +98,7 @@
 <script>
 
 function getURL( service ){
-  //return "http://192.168.17.186:3000" + service;
-  return "http://localhost:3000" + service;
+  return "http://192.168.17.186:3000" + service;
 }
 
 function searchAndSetup( hdr, input, target, btn ){
@@ -132,7 +131,7 @@ function searchAndSetup( hdr, input, target, btn ){
         });
       break;
     case 'label_track':
-      var lnk = getURL( '/v1/accountant/queries?'+hdr+'=' + input );
+      var lnk = getURL( '/v1/accountant/queries?'+hdr+'=' + input.match( /\w+[^\[\]]/ ) );
       $.getJSON( lnk, function( data ){
           status = 200;
           code = data.response_code;
@@ -161,7 +160,7 @@ function searchAndSetup( hdr, input, target, btn ){
           code = data.response_code;
           msg = data.response_message;
           $( '#'+hdr ).prev( 'input' ).val( '' );
-          target.html( setupCard( hdr, input, prepEntry( data.entry ), 1, lnk ) );
+          target.html( setupCard( hdr, input, data.entry.description, data.entry.label_count, data.entry.json_url ) );
         }).fail( function( xhr, txtStatus, err ){
           var resp = xhr.responseJSON;
           status = xhr.status;
@@ -176,13 +175,15 @@ function searchAndSetup( hdr, input, target, btn ){
           console.log( 'Result: '+ status +':(' + code +')-' + msg );
           btn.removeClass( 'loading' );
         });
-      break;
-      /*
-    default:
-      //should never be visible....
-      target.html( messageBlock( hdr + ' is not defined yet.', 'error' ) );
-      btn.removeClass( 'loading' );
-      */
+  }
+}
+
+function prepCountEntry( entry ){
+  if( entry instanceof Object ){
+    var ans = {};
+    return presentEntry( ans, entry['label_vendor'] );
+  }else{
+    return entry;
   }
 }
 
@@ -361,6 +362,8 @@ function messageBlock( msg, type, reason ){
 }
 
 $(function (){
+  $( '#all_qry_link' ).attr( 'href', getURL( '/v1/labelauditor' ) );
+
   $( ".reset_search" ).click( function(){
     var target = $( "#answer_div" );
     $(this).closest('.segment').find( 'input' ).each( function(){
