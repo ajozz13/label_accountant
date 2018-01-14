@@ -83,7 +83,7 @@ function searchBy( obj, counts, by, req, res ){
       ans[ 'label_count' ] = count;
       var msg = 'There are '+ count + ' entries with ' + key.toUpperCase()+ ': '+ val;
       ans[ 'description' ] = msg;
-      ans[ 'json_url' ] = getURL(req) + '?'+by+'='+val;
+      ans[ 'json_url' ] = getURL(req) + '?' + toRequestParams( obj ); // +by+'='+val;
       var nmsg = 'No entries found with ' + key.toUpperCase()+ ': '+ val;
       handleAnswer( res, req.originalUrl, err, ans, 200, 'OK', nmsg );
     });
@@ -92,6 +92,12 @@ function searchBy( obj, counts, by, req, res ){
       handleAnswer( res, req.originalUrl, err, labels, 200, 'OK', 'The list is empty' );
     });
   }
+}
+
+function toRequestParams( obj ){
+  return Object.keys( obj ).map( function( k ) {
+    return encodeURIComponent( k ) + '=' + encodeURIComponent( obj[ k ] )
+  }).join( '&' );
 }
 
 function handleAnswer( res, req_url, err, entry, http_code, positive_message, negative_message ){
