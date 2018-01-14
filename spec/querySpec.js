@@ -83,8 +83,52 @@ describe( acct_resource+' service tests', function(){
           done.fail();
         }
       });
+    });
 
+    describe( 'expected calls compound queries', function(){
+      var itm = label_data.ip_address;
+      var itm2 = label_data.label_station;
+      var qry = 'ip_address='+itm+'&label_station='+itm2;
+      var cflg = '&_counts';
+      var json_url;
+      it( 'GET - compound query retrieve counts', function( done ){
+        try{
+          request.get( acct_request_url+qry+cflg, { json: true }, function( error, response, body ){
+            expect( body ).not.toBe( null );
+            expect( response.statusCode ).toBe( 200 );
+            expect( body.response_code ).toBe( 0 );
+            expect( body.response_message ).toBe( "OK" );
+            expect( body.request_url ).toBe( acct_qry_resource+qry+cflg );
+            expect( body.entry ).not.toBe( null );
+            expect( body.entry.label_count ).toBe( 1 );
+            expect( body.entry.description ).toMatch( /1 entries with/ );
+            expect( body.entry.json_url ).toBe( acct_request_url + qry );
+            json_url = body.entry.json_url;
+            done();
+          });
+        }catch( exc ){
+          console.log( exc );
+          done.fail();
+        }
+      });
 
+      it( 'GET - compound query retrieve list', function( done ){
+        try{
+          request.get( json_url, { json: true }, function( error, response, body ){
+            expect( body ).not.toBe( null );
+            expect( response.statusCode ).toBe( 200 );
+            expect( body.response_code ).toBe( 0 );
+            expect( body.response_message ).toBe( "OK" );
+            expect( body.request_url ).toBe( acct_qry_resource+qry );
+            expect( body.entry ).not.toBe( null );
+            expect( body.entry.length ).toBe( 1 );
+            done();
+          });
+        }catch( exc ){
+          console.log( exc );
+          done.fail();
+        }
+      });
     });
 
   });
