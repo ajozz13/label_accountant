@@ -281,7 +281,7 @@ function produceLinks( input, vendor ){
       }
       if( traverse ){
         $.each(arr, function( i, val ){
-          var s = $( '<span/>' ).html( createLink( url+val.match( /\w+[^\[\]]/ ), val ) );
+          var s = $( '<span/>' ).html( createLink( url+val.replace("[", "").replace( "]", "" ), val ) );
           hldr.append( s ).append( "&nbsp;" );
         });
       }
