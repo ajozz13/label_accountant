@@ -45,10 +45,10 @@ exports.options_handler = function( req, res ){
 //Accounant queries
 exports.accountant_queries = function( req, res ){
   var obj = req.query;
-  var req_counts = obj.hasOwnProperty( '_counts' );
-  if( req_counts ){
-    delete obj._counts;
-  }
+  var req_counts = getProperty( obj, '_counts' );
+  var _start = getProperty( obj, '_start' );
+  var _end = getProperty( obj, '_end' );
+
   var key = Object.keys(obj)[0];
   var val = obj[key];
 
@@ -61,12 +61,26 @@ exports.accountant_queries = function( req, res ){
         });
         break;
       default:
-        searchBy( req.query, req_counts, key, req, res );
+      //{"created_date": {"$gte": new Date(2012, 7, 14), "$lt": new Date(2012, 7, 15)}})
+        if( _end !== false ){
+          _start = new Date( _start === false ? '2018-01-10' : _start );
+          _end = new Date( _end );
+          obj[ 'created_date' ] = { "$gte": _start, "$lt": _end };
+        }
+        searchBy( obj, req_counts, key, req, res );
     }
-
-    console.log( obj );
   }else{
     sendResponse( res, 400, 2, "Request is not available", req.originalUrl );
+  }
+}
+
+function getProperty( obj, name ){
+  if( obj.hasOwnProperty(name) ){
+    var r = obj[name];
+    delete obj[name];
+    return null === r ? true : r;
+  }else{
+    return false;
   }
 }
 
@@ -75,6 +89,7 @@ function getURL( req ){
 }
 
 function searchBy( obj, counts, by, req, res ){
+//  console.log( obj );
   var key = Object.keys(obj)[0];
   var val = obj[key];
   if( counts ){
