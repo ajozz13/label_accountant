@@ -86,11 +86,19 @@ describe( acct_resource+' service tests', function(){
     });
 
     describe( 'expected calls compound queries', function(){
+
       var itm = label_data.ip_address;
       var itm2 = label_data.label_station;
       var qry = 'ip_address='+itm+'&label_station='+itm2;
       var cflg = '&_counts';
       var json_url;
+      var x, y;
+      x = y = Date.now();
+      var today = new Date( x );
+      var tomorrow = new Date( y );
+      tomorrow.setDate( tomorrow.getDate() + 1 );
+      qry2='label_vendor='+label_data.label_vendor+'&_start='+ getDateFormat(today) +'&_end='+getDateFormat(tomorrow);
+
       it( 'GET - compound query retrieve counts', function( done ){
         try{
           request.get( acct_request_url+qry+cflg, { json: true }, function( error, response, body ){
@@ -129,6 +137,25 @@ describe( acct_resource+' service tests', function(){
           done.fail();
         }
       });
+
+      it( 'GET - query using vendor and date_range', function( done ){
+        try{
+          request.get( acct_request_url+qry2, { json: true }, function( error, response, body ){
+            expect( body ).not.toBe( null );
+            expect( response.statusCode ).toBe( 200 );
+            expect( body.response_code ).toBe( 0 );
+            expect( body.response_message ).toBe( "OK" );
+            expect( body.request_url ).toBe( acct_qry_resource+qry2 );
+            expect( body.entry ).not.toBe( null );
+            expect( body.entry.length ).toBe( 1 );
+            done();
+          });
+        }catch( exc ){
+          console.log( exc );
+          done.fail();
+        }
+      });
+
     });
 
   });
@@ -171,4 +198,23 @@ function setupTests( label_data, label_id ){
   afterEach( function(){
   });
 */
+}
+
+//Helpers
+function pad(n){return n<10 ? '0'+n : n;}
+
+function getDateFormat( dt ){
+  return dt.getFullYear()+'-'+pad(dt.getMonth()+1)+'-'+pad(dt.getDate());
+}
+function getTimeZoneDateFormat( dt ){
+  return dt.getFullYear()+'-'+pad(dt.getMonth()+1)+'-'+pad(dt.getDate())+' '+pad(dt.getHours())+':'+pad(dt.getMinutes())+':'+pad(dt.getSeconds());
+}
+
+function ISODateString(d){
+    return d.getUTCFullYear()+'-'
+    + pad(d.getUTCMonth()+1)+'-'
+    + pad(d.getUTCDate())+'T'
+    + pad(d.getUTCHours())+':'
+    + pad(d.getUTCMinutes())+':'
+    + pad(d.getUTCSeconds())+'Z'
 }
