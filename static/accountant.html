@@ -5,6 +5,8 @@
 <link rel="shortcut icon" href="https://www.ibcinc.com/hubfs/IBC_Logo.jpg?t=1514906276576">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css"
   integrity="sha256-/Z28yXtfBv/6/alw+yZuODgTbKZm86IKbPE/5kjO/xY=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui-calendar/0.0.8/calendar.min.css"
+  integrity="sha256-KCHiPtYk/vfF5/6lDXpz5r5FuIYchVdai0fepwGft80=" crossorigin="anonymous" />
 </head>
 <body>
 <div class="ui text container">
@@ -35,37 +37,55 @@
           <button class="ui blue icon button search" id="label_track"><i class="search icon"></i></button>
         </div>
         <div class="ui clearing divider"></div>
-        <button class='ui red button reset_search'>Reset</button>
+        <button class='ui red labeled icon button reset_search'><i class="refresh icon"></i>Reset</button>
     </div>
-    <div class='ui segment'>
-       <div class="ui top attached label">Summaries Search</div>
-        <h4 class="ui header">Search Using the Owner's Public ID</h4>
-        <div class="ui action input">
-          <input placeholder="ie: 5685257b" type="text">
-          <button class="ui blue icon button search" id="public_id"><i class="search icon"></i></button>
-        </div>
 
-        <h4 class="ui header">Search Using the Source IP Address</h4>
-        <div class="ui action input">
-          <input placeholder="ie: 192.168.99.1" type="text">
-          <button class="ui blue icon button search" id="ip_address"><i class="search icon"></i></button>
-        </div>
+    <div class='ui segments'>
+      <div class='ui segment'>
+         <div class="ui top attached label">Summaries Search</div>
+          <h4 class="ui header">Search Using the Owner's Public ID</h4>
+          <div class="ui action input">
+            <input placeholder="ie: 5685257b" type="text">
+            <button class="ui blue icon button search" id="public_id"><i class="search icon"></i></button>
+          </div>
 
-        <h4 class="ui header">Search Using the Vendor</h4>
-        <div class="ui action input">
-          <input placeholder="ie: FEDEX|UPS" type="text">
-          <button class="ui blue icon button search" id="label_vendor"><i class="search icon"></i></button>
-        </div>
+          <h4 class="ui header">Search Using the Source IP Address</h4>
+          <div class="ui action input">
+            <input placeholder="ie: 192.168.99.1" type="text">
+            <button class="ui blue icon button search" id="ip_address"><i class="search icon"></i></button>
+          </div>
 
-        <h4 class="ui header">Search Using the Station</h4>
-        <div class="ui action input">
-          <input placeholder="ie: MIA|LAX|NYC|ORD" type="text">
-          <button class="ui blue icon button search" id="label_station"><i class="search icon"></i></button>
+          <h4 class="ui header">Search Using the Vendor</h4>
+          <div class="ui action input">
+            <input placeholder="ie: FEDEX|UPS" type="text" class='upcase'>
+            <button class="ui blue icon button search" id="label_vendor"><i class="search icon"></i></button>
+          </div>
+
+          <h4 class="ui header">Search Using the Station</h4>
+          <div class="ui action input">
+            <input placeholder="ie: MIA|LAX|NYC|ORD" type="text" class='upcase'>
+            <button class="ui blue icon button search" id="label_station"><i class="search icon"></i></button>
+          </div>
         </div>
-        <div class="ui clearing divider"></div>
-        <button class='ui red button reset_search'>Reset</button>
+        <div class='ui secondary segment'>
+          <h5 class="ui header">Limit your query by date</h5>
+          <div class="ui calendar" id="start_date">
+            <div class="ui input left icon">
+              <i class="calendar icon"></i>
+              <input type="text" placeholder="Start Date" id='start_date_txt'>
+            </div>
+          </div>
+          <div class="ui calendar" id="end_date">
+            <div class="ui input left icon">
+              <i class="calendar icon"></i>
+              <input type="text" placeholder="End Date" id='end_date_txt'>
+            </div>
+          </div>
+
+        </div>
       </div>
 
+      <button class='ui red labeled icon button reset_search'><i class="refresh icon"></i>Reset</button>
 
     </div>
     <div class="column">
@@ -95,6 +115,8 @@
   integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"
   integrity="sha256-Bhi6GMQ/72uYZcJXCJ2LToOIcN3+Cx47AZnq/Bw1f7A=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui-calendar/0.0.8/calendar.min.js"
+  integrity="sha256-Pnz4CK94A8tUiYWCfg/Ko25YZrHqOKeMS4JDXVTcVA0=" crossorigin="anonymous"></script>
 <script>
 
 function getURL( service ){
@@ -154,7 +176,15 @@ function searchAndSetup( hdr, input, target, btn ){
         });
       break;
     default:
-      var lnk = getURL( '/v1/accountant/queries?_counts&'+hdr+'=' + input );
+      var lnk = getURL( '/v1/accountant/queries?'+hdr+'='+input );
+      if( $( '#start_date_txt' ).val() ){
+        lnk = lnk.concat( '&_start='+ $( '#start_date_txt' ).val() );
+      }
+      if( $( '#end_date_txt' ).val() ){
+        lnk = lnk.concat( '&_end=' + $( '#end_date_txt' ).val() );
+      }
+      lnk = lnk.concat( '&_counts' );
+      console.log( lnk );
       $.getJSON( lnk, function( data ){
           status = 200;
           code = data.response_code;
@@ -363,6 +393,30 @@ function messageBlock( msg, type, reason ){
 
 $(function (){
   $( '#all_qry_link' ).attr( 'href', getURL( '/v1/labelauditor' ) );
+
+  $( "input.upcase" ).keyup(function(){
+    $(this).val( $(this).val().toUpperCase() );
+  });
+
+  //Date inputs
+  var dt_format = { date: function (date, settings) {
+      function pad(n){return n<10 ? '0'+n : n;}
+      if (!date) return '';
+      return date.getFullYear() + '-' + pad( date.getMonth()+1 )+ '-' + pad( date.getDate() );
+    }
+  }
+  $( '#start_date' ).calendar({
+    type: 'date',
+    minDate: new Date( 2018, 01, 10 ),
+    formatter: dt_format,
+    endCalendar: $('#end_date')
+  });
+  $( '#end_date' ).calendar({
+    type: 'date',
+    minDate: new Date( 2018, 01, 10 ),
+    formatter: dt_format,
+    startCalendar: $('#start_date')
+  });
 
   $( ".reset_search" ).click( function(){
     var target = $( "#answer_div" );
