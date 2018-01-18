@@ -65,7 +65,7 @@ exports.accountant_queries = function( req, res ){
         if( _end !== false ){
           _start = new Date( _start === false ? '2018-01-10' : _start );
           _end = new Date( _end );
-          obj[ 'created_date' ] = { "$gte": _start, "$lt": _end };
+          obj[ 'created_date' ] = { "$gte": _start, "$lte": _end };
         }
         searchBy( obj, req_counts, key, req, res );
     }
@@ -78,7 +78,7 @@ function getProperty( obj, name ){
   if( obj.hasOwnProperty(name) ){
     var r = obj[name];
     delete obj[name];
-    return null === r ? true : r;
+    return ( r===null || r === '') ? true : r;
   }else{
     return false;
   }
@@ -111,8 +111,20 @@ function searchBy( obj, counts, by, req, res ){
 
 function toRequestParams( obj ){
   return Object.keys( obj ).map( function( k ) {
-    return encodeURIComponent( k ) + '=' + encodeURIComponent( obj[ k ] )
+    if( k === 'created_date' ){
+        var cd = obj[k];
+        var sd = getDateFormat( cd['$gte'] );
+        var ed = getDateFormat( cd['$lte'] );
+        return '_start=' + encodeURIComponent( sd ) + '&_end=' + encodeURIComponent( ed );
+    }else{
+      return encodeURIComponent( k ) + '=' + encodeURIComponent( obj[ k ] )
+    }
   }).join( '&' );
+}
+
+function getDateFormat( dt ){
+  var dt = dt.toISOString();
+  return dt.slice( 0, 10 );
 }
 
 function handleAnswer( res, req_url, err, entry, http_code, positive_message, negative_message ){
