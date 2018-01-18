@@ -85,7 +85,8 @@ function getProperty( obj, name ){
 }
 
 function getURL( req ){
-  return req.protocol+"://"+req.get('host')+req.path;
+  //return req.protocol+"://"+req.get('host')+req.path;
+  return req.protocol+"://"+req.get('host')+req.originalUrl.replace( '&_counts', '' );
 }
 
 function searchBy( obj, counts, by, req, res ){
@@ -98,7 +99,8 @@ function searchBy( obj, counts, by, req, res ){
       ans[ 'label_count' ] = count;
       var msg = 'There are '+ count + ' entries with ' + key.toUpperCase()+ ': '+ val;
       ans[ 'description' ] = msg;
-      ans[ 'json_url' ] = getURL(req) + '?' + toRequestParams( obj ); // +by+'='+val;
+      //ans[ 'json_url' ] = getURL(req) + '?' + toRequestParams( obj ); // +by+'='+val;
+      ans[ 'json_url' ] = getURL(req);
       var nmsg = 'No entries found with ' + key.toUpperCase()+ ': '+ val;
       handleAnswer( res, req.originalUrl, err, ans, 200, 'OK', nmsg );
     });
