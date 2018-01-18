@@ -405,15 +405,17 @@ $(function (){
       return date.getFullYear() + '-' + pad( date.getMonth()+1 )+ '-' + pad( date.getDate() );
     }
   }
+  var min_date = new Date( 2018, 00, 10 );  //0 = january....
+
   $( '#start_date' ).calendar({
     type: 'date',
-    minDate: new Date( 2018, 01, 10 ),
+    minDate: min_date,
     formatter: dt_format,
     endCalendar: $('#end_date')
   });
   $( '#end_date' ).calendar({
     type: 'date',
-    minDate: new Date( 2018, 01, 10 ),
+    minDate: min_date,
     formatter: dt_format,
     startCalendar: $('#start_date')
   });
