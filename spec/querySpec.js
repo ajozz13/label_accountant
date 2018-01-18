@@ -191,7 +191,7 @@ function setupTests( label_data, label_id ){
         function( error, response, body ){
           if( error ) throw error;
           label_id = body.entry._id;
-          console.log( "Test entry added " + response.statusCode );
+          //console.log( "Test entry added " + response.statusCode );
           done();
       });
     }catch( exc ){
@@ -204,7 +204,7 @@ function setupTests( label_data, label_id ){
     try{
       request.delete( label_request_url+'/'+label_id, { json: true }, function( error, response, body ){
         if( error ) throw error;
-        console.log( "Test entry removed " + response.statusCode );
+        //console.log( "Test entry removed " + response.statusCode );
         done();
       });
     }catch( exc ){
