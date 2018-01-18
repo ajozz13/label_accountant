@@ -138,9 +138,30 @@ describe( acct_resource+' service tests', function(){
         }
       });
 
-      it( 'GET - query using vendor and date_range', function( done ){
+      it( 'GET - query using vendor and date_range counts', function( done ){
         try{
-          request.get( acct_request_url+qry2, { json: true }, function( error, response, body ){
+          request.get( acct_request_url+qry2+cflg, { json: true }, function( error, response, body ){
+            expect( body ).not.toBe( null );
+            expect( response.statusCode ).toBe( 200 );
+            expect( body.response_code ).toBe( 0 );
+            expect( body.response_message ).toBe( "OK" );
+            expect( body.request_url ).toBe( acct_qry_resource+qry2+cflg );
+            expect( body.entry ).not.toBe( null );
+            expect( body.entry.label_count ).toBe( 1 );
+            expect( body.entry.description ).toMatch( /1 entries with/ );
+            expect( body.entry.json_url ).toBe( acct_request_url+qry2 );
+            json_url = body.entry.json_url;
+            done();
+          });
+        }catch( exc ){
+          console.log( exc );
+          done.fail();
+        }
+      });
+
+      it( 'GET - query using vendor and date_range list', function( done ){
+        try{
+          request.get( json_url, { json: true }, function( error, response, body ){
             expect( body ).not.toBe( null );
             expect( response.statusCode ).toBe( 200 );
             expect( body.response_code ).toBe( 0 );
