@@ -10,8 +10,9 @@ var express = require( 'express' ),
 
 //dbSetup
 mongoose.Promise = global.Promise;
-mongoose.connect( config.environment === 'development' ?
-  config.database_url_test : config.database_url );
+var mondb = config.environment === 'development' ?
+  config.database_url_test : config.database_url;
+mongoose.connect( mondb, { useNewUrlParser: true } );
 
 //Accept cross-origin browser requests
 app.use( function( req, res, next ){
@@ -51,4 +52,5 @@ app.use( function( req, res ){
 
 app.listen( config.application_port );
 logger.info( 'Environment: '+ config.environment );
+logger.info( 'Mondb: '+ mondb );
 logger.info( 'Host: '+ config.application_url + ' started for services: '+ config.resources );
